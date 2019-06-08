@@ -1,14 +1,8 @@
 package DataBaseConnection;
 
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.io.InputStream;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * SqliteDbConnection is an implementation of IdbConnection interface.
@@ -66,22 +60,102 @@ public class SqliteDbConnection implements IdbConnection {
 
     @Override
     public void connectToDb() throws Exception {
+        conn = null;
+        try {
+            // db parameters
+            String url = this.props.getProperty("dbUrl");
+            // create a connection to the database
+            conn = DriverManager.getConnection(url, "yishaiazabary", "Yi82Za65");
 
+            System.out.println("Connection to SQLite has been established.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+//            System.out.println(e.getMessage());
+            throw new Exception(e.getMessage());
+        }
     }
 
     @Override
     public void createNewTable(String tableName, String[] columnTitles, String primaryKeyName) throws Exception {
+        this.connectToDb();
 
+        // SQLite connection string
+
+        String tableColumnsSql ="" ;
+
+        //creating the sql string part with all the the column titles
+        for (String str :
+                columnTitles) {
+            tableColumnsSql += str + " text" + " NOT NULL,\n";
+        }
+
+        // SQL statement for creating a new table
+        String sql = "CREATE TABLE IF NOT EXISTS "+tableName+" ("
+                +tableColumnsSql
+                + "PRIMARY KEY ("+primaryKeyName+"));";
+
+        try (Connection tempConn=this.conn;
+             Statement stmt = tempConn.createStatement()) {
+            // create a new table
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            System.out.println("//////////FOR DEBUGGING////////dont forget to connect to db! ");
+//            System.out.println(e.getMessage());
+            throw new Exception(e.getMessage());
+        }
     }
 
     @Override
     public LinkedList<Map<String, String>> getAllFromTable(String tableName) throws Exception {
-        return null;
+        this.connectToDb();
+
+        LinkedList<Map<String, String>> ans=new LinkedList<Map<String, String>>();
+
+        Map<String, String> singleEntryMap = new HashMap<>();
+
+        String sql = "SELECT * FROM "+tableName;
+
+        try (Connection tempConn = this.conn;
+             Statement stmt  = tempConn.createStatement();
+             ResultSet rs    = stmt.executeQuery(sql)){
+            ResultSetMetaData md = rs.getMetaData();
+            int columns = md.getColumnCount();
+            while (rs.next()){
+                HashMap row = new HashMap(columns);
+                for(int i=1; i<=columns; ++i){
+                    row.put(md.getColumnName(i),rs.getObject(i));
+                }
+                ans.add(row);
+            }
+
+            return ans;
+
+        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+            throw new Exception(e.getMessage());
+        }
     }
 
     @Override
     public void insert(String tableName, String[] columnValues) throws Exception {
+        this.connectToDb();
 
+
+//        String fieldNamesForSql=convertArrayToSingleStr(columnValues);
+
+        String fieldValuesForSql=convertArrayToSingleStr(columnValues);
+
+        String sql = "INSERT INTO "+tableName+ " VALUES("+fieldValuesForSql+")";
+
+        try (Connection conn = this.conn;
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+            throw new Exception(e.getMessage());
+        }
     }
 
     @Override
@@ -118,131 +192,23 @@ public class SqliteDbConnection implements IdbConnection {
     public void deleteTable(String tableName) throws Exception {
 
     }
+
+    private String convertArrayToSingleStr(String[] array){
+        String ans ="";
+        for(String str: array){
+            ans = ans + "'" +str + "'"+ ',';
+        }
+        ans = ans.substring(0,ans.length()-1);
+        return ans;
+    }
 }
 //
 //public class SqliteDbConnection implements IdbConnection {
-//
-//    private Properties props;
-//    private Connection conn;
-//
-//    /**
-//     * creates the initial database if not existent.
-//     * throws error if the communication with the db doesn't succeed.
-//     * pass the parameter create = True
-//     * @param create - boolean
-//     * @throws Exception - an SQL type exception
-//     */
-//    public SqliteDbConnection(boolean create) throws Exception {
-//        props = new Properties();
-//        String propFileName = "config.properties";
-//        try {
-//            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
-//            if (inputStream != null) {
-//                props.load(inputStream);
-//            }
-//        } catch (Exception e) {
-//            System.out.println(e.getMessage());
-////            e.printStackTrace();
-//        }finally {
-//            if(create&& props!=null){
-//
-//                String url = props.getProperty("dbUrl");
-//
-//                Connection conn = DriverManager.getConnection(url) ;
-//                if (conn != null) {
-//                    DatabaseMetaData meta = conn.getMetaData();
-//                    System.out.println("The driver name is " + meta.getDriverName());
-//                    System.out.println("A new database has been created.");
-//                }
-//            }
-//        }
-//
-//    }
-//
-//    @Override
-//    public void deleteTable(IEntry entry) throws Exception{
-//        this.connectToDb();
-//        String sql= "drop table "+entry.getTableName();
-//        try (Connection tempConn=this.conn;
-//             Statement stmt = tempConn.createStatement()) {
-//            // create a new table
-//            stmt.execute(sql);
-//        } catch (SQLException e) {
-//            System.out.println("//////////FOR DEBUGGING////////dont forget to connect to db! ");
-////            System.out.println(e.getMessage());
-//            throw new Exception(e.getMessage());
-//        }
-//    }
-//
-//    @Override
-//    public void connectToDb() throws Exception{
-//        conn = null;
-//        try {
-//            // db parameters
-//            String url = this.props.getProperty("dbUrl");
-//            // create a connection to the database
-//            conn = DriverManager.getConnection(url, "yishaiazabary", "Yi82Za65");
-//
-//            System.out.println("Connection to SQLite has been established.");
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-////            System.out.println(e.getMessage());
-//            throw new Exception(e.getMessage());
-//        }
-//    }
-//
-//    @Override
-//    public void createNewTable(IEntry entry) throws Exception{
-//        this.connectToDb();
-//
-//        // SQLite connection string
-//
-//        String tableColumnsSql ="" ;
-//
-//        //creating the sql string part with all the the column titles
-//        for (String str :
-//                entry.getColumnsTitles()) {
-//            tableColumnsSql += str + " text" + " NOT NULL,\n";
-//        }
-//
-//        // SQL statement for creating a new table
-//        String sql = "CREATE TABLE IF NOT EXISTS "+entry.getTableName()+" ("
-//                +tableColumnsSql
-//                + "PRIMARY KEY ("+entry.getIdentifiers()+"));";
-//
-//        try (Connection tempConn=this.conn;
-//             Statement stmt = tempConn.createStatement()) {
-//            // create a new table
-//            stmt.execute(sql);
-//        } catch (SQLException e) {
-//            System.out.println("//////////FOR DEBUGGING////////dont forget to connect to db! ");
-////            System.out.println(e.getMessage());
-//            throw new Exception(e.getMessage());
-//        }
-//
-//
-//    }
+
 //
 //    @Override
 //    public void insert(IEntry entry) throws Exception{
-//        this.connectToDb();
-//
-//
-//        String fieldNamesForSql=createSqlStringColumns(entry);
-//
-//        String fieldValuesForSql=createSqlStringValues(entry) ;
-//
-//        String sql = "INSERT INTO "+entry.getTableName()+"("+fieldNamesForSql+") VALUES("+fieldValuesForSql+")";
-//
-//        try (Connection conn = this.conn;
-//             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-//            pstmt.executeUpdate();
-//
-//        } catch (SQLException e) {
-////            System.out.println(e.getMessage());
-//            throw new Exception(e.getMessage());
-//        }
+
 //    }
 //
 //    @Override
@@ -340,34 +306,7 @@ public class SqliteDbConnection implements IdbConnection {
 //
 //    @Override
 //    public LinkedList<String[]> getAllFromTable(IEntry entry) throws Exception{
-//        this.connectToDb();
 //
-//        LinkedList<String[]> ans=new LinkedList<String[]>();
-//
-//        String[] tempStringArray;
-//
-//        String sql = "SELECT * FROM "+entry.getTableName();
-//
-//        try (Connection tempConn = this.conn;
-//             Statement stmt  = tempConn.createStatement();
-//             ResultSet rs    = stmt.executeQuery(sql)){
-//
-//            // loop through the result set
-//            while (rs.next()) {
-//                String[] columns=entry.getColumnsTitles();
-//                tempStringArray = new String[columns.length+1];
-//                tempStringArray[0]=Integer.toString(rs.getInt(entry.getIdentifiers()));
-//                for (int i = 1; i < columns.length+1; i++) {
-//                    tempStringArray[i]=rs.getString(columns[i-1]);
-//                }
-//                ans.add(tempStringArray);
-//            }
-//        } catch (SQLException e) {
-////            System.out.println(e.getMessage());
-//            throw new Exception(e.getMessage());
-//        }
-//
-//        return ans;
 //    }
 //
 //    @Override
