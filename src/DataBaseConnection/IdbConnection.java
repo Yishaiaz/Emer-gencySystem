@@ -10,6 +10,9 @@ import java.util.Map;
  * i.e a communication module with Sqlite local db, or a mongoDB JSON cloud based data base.
  * all functions are able to throw an exception according to their implementation in the inheriting class.
  * as an example,
+ * Recommended implementation is via SingleTon
+ *
+ * @author Yishaia Zabary
  * @see SqliteDbConnection
  */
 public interface IdbConnection {
@@ -43,11 +46,13 @@ public interface IdbConnection {
      * @throws Exception - an SQL type exception
      */
     void insert(String tableName, String[] columnValues) throws Exception;//should db connection use be implemented inside an entry object?
+
     /**
      *
-     * @param tableName - string
-     * @param columnValues - string array.
-     * @param primaryKey - the id of the entry to update
+     * @param tableName - String
+     * @param columnValues - String[] the new values ordered by the table scheme.
+     * @param primaryKeyValue
+     * @param primaryKeyName
      * @throws Exception
      */
     void updateEntry(String tableName, String[] columnValues, String primaryKeyValue, String primaryKeyName) throws Exception;
@@ -74,23 +79,10 @@ public interface IdbConnection {
     void deleteById(String tableName, String primaryKeyValue, String primaryKeyName) throws Exception;
 
     /**
-     * returns data of specific fields of an entry, i.e a user's password.
-     * it can return multiple specific data fields, when each string inside String[] namesOfSpecificFields is a field
-     * it's data the user would like to receive in return.
-     * if an error occurred, this function throws an SQL type exception.
-     * this uses the method IEntry.getTableName() in order to get the Entry's table name.
-     *
-     * @param entry - type IEntry
-     * @param entryId - String
-     * @param namesOfSpecificField - String[]
-     * @return Arraylist of Strings
-     * @throws Exception - an SQL type exception
-     */
-    /**
-     *
-     * @param tableName
-     * @param primaryKey
-     * @return Map <key,value>
+     * retrieve an entry entire data.
+     * @param tableName - String
+     * @param primaryKeyName - String
+     * @return Map <key,value> - <ColumnLable, value>
      * @throws Exception
      */
     Map<String, String> getEntryData(String tableName, String primaryKeyValue, String primaryKeyName) throws Exception;

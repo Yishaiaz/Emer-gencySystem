@@ -6,6 +6,7 @@ import java.util.*;
 
 /**
  * SqliteDbConnection is an implementation of IdbConnection interface.
+ * IMPLEMENTED AS SINGLETON.
  * communicates with a local database, which it's name and location is configured in resources/config.properties.
  *
  * contains two private fields - props which is the properties of the data base from the said configuration file.
@@ -218,7 +219,6 @@ public class SqliteDbConnection implements IdbConnection {
 
     @Override
     public Map<String, String> getEntryData(String tableName, String primaryKeyValue, String primaryKeyName) throws Exception {
-
         this.connectToDb();
 
         Map<String, String> ans=new HashMap<>();
