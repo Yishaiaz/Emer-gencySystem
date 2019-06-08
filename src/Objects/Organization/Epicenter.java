@@ -4,32 +4,35 @@ import Objects.users.Auser;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class Epicenter extends Aorganization {
-    public Epicenter(String name) throws Exception {
+public class Epicenter extends Aorganization { //single tone
+    private static Epicenter instance =null;
+    private Epicenter(String name) throws Exception {
         super(name);
     }
+    public static Epicenter getInstance(String name) throws Exception {
+        if(instance!=null){
+            return instance;
+        }
+        instance = new Epicenter("epicenter");
+        return instance;
+    }
 
 
-    public void createEvent(String userName, String[] categories, Auser[] users)throws Exception{
-        //checks that user is a Member of Epicenter
-        if(!isMember(userName)){
-            throw new Exception("user" + userName + "is not a member of Epicenter\n ONLY MEMBERS OF EPICENTER CAN CREATE EVENTS!");
+
+
+    public void addCategory(String categoryName, String userName)throws Exception{
+        if(categoryName == null || categoryName.length() == 0 || userName==null ){
+            throw new Exception("error: bad input: Epicenter:addCategory");
+        }
+        if(userName != getAdmnin()){
+            throw new Exception("error: only the admin of the Epicenter can add a category: Epicenter:addCategory");
         }
 
-
-        if(categories == null || categories.length<1 ){
-            throw new Exception("must give at least one category");
-        }
-
-        //checks that categories exist
-        for(String cat : categories){
-            db.getEntryData("Categories", cat,"category");
-        }
-
-        String newID = (db.getAllFromTable("Events").size() + 1)+"";
-
-
-
+        String[] entry = {categoryName};
+        db.insert("Categories",entry);
 
     }
+
+
+
 }
