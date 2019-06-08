@@ -1,5 +1,7 @@
-package sample;
+package View;
 
+import Controller.Controller;
+import Model.Model;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,22 +13,38 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        Model model = new Model(SqliteDbConnection.getInstance());
+        model.createTables();
+        Controller controller = new Controller(model);
+        model.addObserver(controller);
+
+        primaryStage.setTitle("Emer-gency");
+
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        Parent root = fxmlLoader.load(getClass().getResource("/Views/Main.fxml").openStream());
+        Scene scene = new Scene(root, 800, 650);
+
+
+        scene.getStylesheets().clear();
+        scene.getStylesheets().add(getClass().getResource("/mainScreenStyle.css").toExternalForm());
+        primaryStage.setScene(scene);
+        View view = fxmlLoader.getController();
+        view.setController(controller);
+        controller.addObserver(view);
+
         primaryStage.show();
     }
 
 
-//    public static void main(String[] args) {
-//        launch(args);
-//    }
-    public static void main(String[] args){
-
-        try{
-            SqliteDbConnection.getInstance();
-        }catch(Exception e){
-            System.out.println(e.getMessage());
-        }
+    public static void main(String[] args) {
+        launch(args);
     }
+//    public static void main(String[] args){
+//
+//        try{
+//            SqliteDbConnection.getInstance();
+//        }catch(Exception e){
+//            System.out.println(e.getMessage());
+//        }
+//    }
 }
