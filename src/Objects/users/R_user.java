@@ -18,4 +18,5 @@ public class R_user extends Auser{
         this.rank = rank;
     }
 
+
 }

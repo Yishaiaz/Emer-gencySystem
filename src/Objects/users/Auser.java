@@ -16,7 +16,8 @@ public abstract class Auser {
         db = SqliteDbConnection.getInstance();
 
        userInfo = db.getEntryData("Users",name,"name");
-
+       if(userInfo==null)
+           throw new Exception("the user "+name + "does not exist");
     }
     public Auser(String name,String password, String status, String email,String organization){
         userInfo = new HashMap<>();
