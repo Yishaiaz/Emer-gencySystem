@@ -50,7 +50,7 @@ public interface IdbConnection {
      * @param primaryKey - the id of the entry to update
      * @throws Exception
      */
-    void updateEntry(String tableName, String[] columnValues, String primaryKey) throws Exception;
+    void updateEntry(String tableName, String[] columnValues, String primaryKeyValue, String primaryKeyName) throws Exception;
 
     /**
      * deletes all data from given table, but not the table itself
@@ -71,7 +71,7 @@ public interface IdbConnection {
      * @param tableName - String
      * @throws Exception - an SQL type exception
      */
-    void deleteById(String tableName, String primaryKey) throws Exception;
+    void deleteById(String tableName, String primaryKeyValue, String primaryKeyName) throws Exception;
 
     /**
      * returns data of specific fields of an entry, i.e a user's password.
@@ -93,7 +93,7 @@ public interface IdbConnection {
      * @return Map <key,value>
      * @throws Exception
      */
-    Map<String, String> getEntryData(String tableName, String primaryKey) throws Exception;
+    Map<String, String> getEntryData(String tableName, String primaryKeyValue, String primaryKeyName) throws Exception;
 
     /**
      * closes the connection to the DB, to be used if the user doesn't need any more communications with the DB itself.

@@ -124,7 +124,7 @@ public class SqliteDbConnection implements IdbConnection {
             while (rs.next()){
                 HashMap row = new HashMap(columns);
                 for(int i=1; i<=columns; ++i){
-                    row.put(md.getColumnName(i),rs.getObject(i));
+                    row.put(md.getColumnName(i),rs.getObject(i).toString());
                 }
                 ans.add(row);
             }
@@ -159,38 +159,118 @@ public class SqliteDbConnection implements IdbConnection {
     }
 
     @Override
-    public void updateEntry(String tableName, String[] columnValues, String primaryKey) throws Exception {
+    public void updateEntry(String tableName, String[] columnValues, String primaryKeyValue, String primaryKeyName) throws Exception {
+        String fieldValuesForSql=createSqlStringForEditing(tableName, columnValues);
 
+        this.connectToDb();
+
+        String sql = "UPDATE "+tableName+ " SET "+fieldValuesForSql+" WHERE "+primaryKeyName+"='"+primaryKeyValue+"';";
+
+        try (Connection conn = this.conn;
+             Statement stmt  = conn.createStatement()){
+            stmt.execute(sql);
+        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+            throw new Exception(e.getMessage());
+        }
     }
+
 
     @Override
     public void deleteAllFromTable(String tableName) throws Exception {
+        this.connectToDb();
 
+        String sql = "DELETE FROM "+tableName;
+
+        try (Connection conn = this.conn;
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // execute the delete statement
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+            throw new Exception(e.getMessage());
+        }
     }
 
     @Override
     public void deleteDb(String dbName) throws Exception {
-
+        throw new Exception("Not Implemented");
     }
 
     @Override
-    public void deleteById(String tableName, String primaryKey) throws Exception {
+    public void deleteById(String tableName, String primaryKeyValue, String primaryKeyName) throws Exception {
+        this.connectToDb();
 
+        String sql = "DELETE FROM "+tableName+" WHERE "+primaryKeyName+" = " +"'"+primaryKeyValue+"';";
+
+        try (Connection conn = this.conn;
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // execute the delete statement
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+            throw new Exception(e.getMessage());
+        }
     }
 
     @Override
-    public Map<String, String> getEntryData(String tableName, String primaryKey) throws Exception {
-        return null;
+    public Map<String, String> getEntryData(String tableName, String primaryKeyValue, String primaryKeyName) throws Exception {
+
+        this.connectToDb();
+
+        Map<String, String> ans=new HashMap<>();
+
+        String sql = "SELECT * FROM "+tableName+" WHERE "+primaryKeyName+" = '"+primaryKeyValue+"';";
+
+        try (Connection tempConn = this.conn;
+             Statement stmt  = tempConn.createStatement();
+             ResultSet rs    = stmt.executeQuery(sql)){
+            ResultSetMetaData md = rs.getMetaData();
+            int columns = md.getColumnCount();
+            while (rs.next()){
+                for(int i=1; i<=columns; ++i){
+                    ans.put(md.getColumnName(i),rs.getObject(i).toString());
+                }
+            }
+
+            return ans;
+
+        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+            throw new Exception(e.getMessage());
+        }
     }
 
     @Override
     public void closeConnection() throws Exception {
+        try {
+            if (this.conn != null) {
+                this.conn.close();
+            }
 
+        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+            throw new Exception(e.getMessage());
+        }
     }
 
     @Override
     public void deleteTable(String tableName) throws Exception {
 
+        String sql = "DROP TABLE "+tableName+";";
+
+        try (Connection tempConn = this.conn;
+             Statement stmt  = tempConn.createStatement();
+             ResultSet rs    = stmt.executeQuery(sql)){
+
+
+        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+            throw new Exception(e.getMessage());
+        }
     }
 
     private String convertArrayToSingleStr(String[] array){
@@ -201,255 +281,36 @@ public class SqliteDbConnection implements IdbConnection {
         ans = ans.substring(0,ans.length()-1);
         return ans;
     }
+    private String createSqlStringForEditing(String tableName,String[] newValues) throws Exception{
+        String ans="";
+        int i=0;
+        String[] columns = getColumnsTitles(tableName);
+        for (String value :
+                newValues) {
+            ans+=columns[i]+"='"+value+"',";
+            i++;
+        }
+        return ans.substring(0,ans.length()-1);
+    }
+    private String[] getColumnsTitles(String tableName) throws Exception{
+        String sql = "SELECT * FROM "+tableName;
+        this.connectToDb();
+
+        try (Connection tempConn = this.conn;
+             Statement stmt  = tempConn.createStatement();
+             ResultSet rs    = stmt.executeQuery(sql)) {
+            ResultSetMetaData md = rs.getMetaData();
+            int columns = md.getColumnCount();
+            int j =0;
+            String[] ans = new String[columns];
+            for(int i=1; i<=columns; ++i){
+                ans[j] = md.getColumnName(i);
+                j++;
+            }
+            return ans;
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
 }
-//
-//public class SqliteDbConnection implements IdbConnection {
-
-//
-//    @Override
-//    public void insert(IEntry entry) throws Exception{
-
-//    }
-//
-//    @Override
-//    public String[] getEntryById(String entryId, IEntry entry)throws Exception {
-//        this.connectToDb();
-//        entryId="'"+entryId+"'";
-//
-//        String[] ans=null;
-//
-//        if (conn == null) {
-//            System.out.println("you have to connect to the DB first, use [dbInstance].connectToDb() function");
-//        }
-//        else{
-//            ans=new String[entry.getColumnsTitles().length];
-//            String sql = "SELECT * FROM "+entry.getTableName()+" WHERE "+entry.getIdentifiers()+"="+entryId+";";
-//            String[] columnsNames= entry.getColumnsTitles();
-//            try (Connection tempConn = this.conn;
-//                 Statement stmt  = tempConn.createStatement();
-//                 ResultSet rs    = stmt.executeQuery(sql)){
-//                ans[0]=rs.getString(entry.getIdentifiers());
-//                for (int i = 0; i < columnsNames.length; i++) {
-//                    ans[i]=rs.getString(columnsNames[i]);
-//                }
-//            } catch (SQLException e) {
-////                System.out.println(e.getMessage());
-//                throw new Exception(e.getMessage());
-//            }
-//            return ans;
-//        }
-//        return null;
-//    }
-//
-//
-//    @Override
-//    public void deleteAllFromTable(String tableName)throws Exception {
-//        this.connectToDb();
-//
-//        String sql = "DELETE FROM "+tableName;
-//
-//        try (Connection conn = this.conn;
-//             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-//
-//            // execute the delete statement
-//            pstmt.executeUpdate();
-//
-//        } catch (SQLException e) {
-////            System.out.println(e.getMessage());
-//            throw new Exception(e.getMessage());
-//        }
-//    }
-//
-//    @Override
-//    public void deleteDb(String dbName) throws Exception{
-//        throw new NotImplementedException();
-//    }
-//
-//    @Override
-//    public void updateEntry(IEntry entry, String[] newValues)throws Exception {
-//        this.connectToDb();
-//
-//        String fieldNamesForSql=createSqlStringForEditing(entry,newValues);
-//        //validate function and
-//        int i=0;
-//
-//        String sql = "UPDATE "+entry.getTableName()+" SET "+fieldNamesForSql
-//                + " WHERE "+entry.getIdentifiers()+"='"+entry.getIdentifierValue()+"';";
-//
-//        try (Connection tempConn = this.conn;
-//             PreparedStatement pstmt = tempConn.prepareStatement(sql)) {
-//            // update
-//            pstmt.executeUpdate();
-//        } catch (SQLException e) {
-////            System.out.println(e.getMessage());
-//            throw new Exception(e.getMessage());
-//        }
-//    }
-//
-//    @Override
-//    public void deleteById(IEntry entry) throws Exception{
-//        this.connectToDb();
-//
-//        String sql = "DELETE FROM "+entry.getTableName()+" WHERE "+entry.getIdentifiers()+" = " +"'"+entry.getIdentifierValue()+"';";
-//
-//        try (Connection conn = this.conn;
-//             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-//            // execute the delete statement
-//            pstmt.executeUpdate();
-//
-//        } catch (SQLException e) {
-////            System.out.println(e.getMessage());
-//            throw new Exception(e.getMessage());
-//        }
-//    }
-//
-//
-//    @Override
-//    public LinkedList<String[]> getAllFromTable(IEntry entry) throws Exception{
-//
-//    }
-//
-//    @Override
-//    public ArrayList<String> getSpecificData(IEntry entry, String entryId, String[] namesOfSpecificField)throws Exception {
-//        ArrayList<String> ans=new ArrayList<>();
-//        this.connectToDb();
-//        entryId="'"+entryId+"'";
-//
-////        String[] allEntryData=getEntryById(entryId,entry);
-//        if (conn == null) {
-//            System.out.println("you have to connect to the DB first, use [dbInstance].connectToDb() function");
-//        }
-//        else{
-//            String sql = "SELECT * FROM "+entry.getTableName()+" WHERE "+entry.getIdentifiers()+"="+entryId+";";
-//            String[] columnsNames= entry.getColumnsTitles();
-//            try (Connection tempConn = this.conn;
-//                 Statement stmt  = tempConn.createStatement();
-//                 ResultSet rs    = stmt.executeQuery(sql)){
-//                for (int i = 0; i < namesOfSpecificField.length; i++) {
-//                    ans.add(rs.getString(namesOfSpecificField[i]));
-//                }
-//            } catch (SQLException e) {
-////                System.out.println(e.getMessage());
-//                throw new Exception(e.getMessage());
-//            }
-//            return ans;
-//        }
-//
-//
-//        return null;
-//    }
-//
-//    @Override
-//    public void closeConnection() throws Exception{
-//        try {
-//            if (this.conn != null) {
-//                this.conn.close();
-//            }
-//
-//        } catch (SQLException e) {
-////            System.out.println(e.getMessage());
-//            throw new Exception(e.getMessage());
-//        }
-//    }
-//
-//
-//    /**
-//     * a private function to create a single string, suitable for Sqlite queries.
-//     * @param entry - IEntry
-//     * @return String, the names of the columns separated by a comma
-//     */
-//    private String createSqlStringColumns(IEntry entry){
-//        String ans="" ;
-//        for (String s:entry.getColumnsTitles()
-//        ) {
-//            ans+=s+",";
-//        }
-//        return ans.substring(0,ans.length()-1);
-//    }
-//
-//    /**
-//     * a private function to create a single string, suitable for Sqlite queries.
-//     * @param entry - IEntry
-//     * @return String, the values of all the fields of the given entry
-//     * @throws Exception - an SQL type exception
-//     */
-//    private String createSqlStringValues(IEntry entry) {
-//        String ans="" ;
-//        for (String s:entry.getAllData()
-//        ) {
-//            ans+="'"+s+"',";
-//        }
-//        return ans.substring(0,ans.length()-1);
-//    }
-//
-//    /**
-//     * a private function to create a single string, suitable for Sqlite queries.
-//     * this returns a string in the following structure: "[nameOField]=[ValueOfField], [nameOField]=[ValueOfField] ,....."
-//     * @param entry - IEntry
-//     * @param newValues - String[] - all the new values, include all values, including ones who don't need to change.
-//     * @return
-//     */
-//    private String createSqlStringForEditing(IEntry entry,String[] newValues){
-//        String ans="";
-//        int i=0;
-//        String[] columns = entry.getColumnsTitles();
-//        for (String value :
-//                newValues) {
-//            ans+=columns[i]+"='"+value+"',";
-//            i++;
-//        }
-//        return ans.substring(0,ans.length()-1);
-//    }
-//
-//    @Override
-//    public void createNewTable(String tableName, String[] columnTitles, String identifier) throws Exception {
-//        this.connectToDb();
-//
-//        // SQLite connection string
-//
-//        String tableColumnsSql ="" ;
-//
-//        //creating the sql string part with all the the column titles
-//        for (String str :
-//                columnTitles) {
-//            tableColumnsSql += str + " text" + " NOT NULL,\n";
-//        }
-//
-//        // SQL statement for creating a new table
-//        String sql = "CREATE TABLE IF NOT EXISTS "+tableName+" ("
-//                +tableColumnsSql
-//                + "PRIMARY KEY ("+identifier+"));";
-//
-//        try (Connection tempConn=this.conn;
-//             Statement stmt = tempConn.createStatement()) {
-//            // create a new table
-//            stmt.execute(sql);
-//        } catch (SQLException e) {
-//            System.out.println("//////////FOR DEBUGGING////////dont forget to connect to db! ");
-////            System.out.println(e.getMessage());
-//            throw new Exception(e.getMessage());
-//        }
-//
-//
-//    }
-//
-//    @Override
-//    public void insertToDbByTableName(String tablename, IEntry entry) throws Exception{
-//        this.connectToDb();
-//
-//        String fieldNamesForSql=createSqlStringColumns(entry);
-//
-//        String fieldValuesForSql=createSqlStringValues(entry) ;
-//
-//        String sql = "INSERT INTO "+tablename+"("+fieldNamesForSql+") VALUES("+fieldValuesForSql+")";
-//
-//        try (Connection conn = this.conn;
-//             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-//            pstmt.executeUpdate();
-//
-//        } catch (SQLException e) {
-////            System.out.println(e.getMessage());
-//            throw new Exception(e.getMessage());
-//        }
-//    }
-//}
