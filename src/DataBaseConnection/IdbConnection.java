@@ -1,9 +1,9 @@
 package DataBaseConnection;
 
-import EntriesObject.IEntry;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * an interface to define the basic functions required from a database communicating module.
@@ -19,56 +19,38 @@ public interface IdbConnection {
      * @throws Exception - an SQL type exceptio
      */
     void connectToDb() throws Exception;
-
-    /**
-     * creates a new table according to the type of the entry.
-     * this uses the method IEntry.getTableName() in order to get the Entry's table name.
-     * @param entry - type IEntry
-     * @throws Exception - an SQL type exception
-     */
-    void createNewTable(IEntry entry) throws Exception;
     /**
      * creates a new table according to the given name of the table.
      * this receives the column titles and the identifier field of table entries in order to construct the sql query.
      * @param tableName - type String
      * @param columnTitles - type String[], the names of the fields.
-     * @param identifier - the name of the identifier field of the entries.
+     * @param primaryKeyName - the name of the identifier field of the entries.
      * @throws Exception - an SQL type exception
      */
-    void createNewTable(String tableName, String[] columnTitles, String identifier) throws Exception;
-    /**
-     * returns an array of strings that contain all the data in string format of the entry, given the entry ID.
-     * throws exception if the entry was not found in matching table
-     * @param entry - type IEntry
-     * @throws Exception - an SQL type exception
-     */
-    String[] getEntryById(String entryId, IEntry entry) throws Exception;
-
+    void createNewTable(String tableName, String[] columnTitles, String primaryKeyName) throws Exception;
     /**
      * returns all the entries in a table given one entry of the table
      * (the function uses the entry type to know from which table to get the data)
-     * @param entry - type IEntry
-     * @return LinkedLis of arrays of strings
+     * @param tableName - type IEntry
+     * @return LinkeList of Maps of key,value
      * @throws Exception - an SQL type exception
      */
-    LinkedList<String[]> getAllFromTable(IEntry entry) throws Exception;
+    LinkedList<Map<String, String>> getAllFromTable(String tableName) throws Exception;
     /**
      * inserts an entry to the appropriate table, if an error occurs throws an exception.
-     * this uses the method IEntry.getTableName() in order to get the Entry's table name.
-     * @param entry - type IEntry
+     * @param tableName - string
+     * @param columnValues - string array of all the column values in the order,
      * @throws Exception - an SQL type exception
      */
-    void insert(IEntry entry) throws Exception;//should db connection use be implemented inside an entry object?
-
+    void insert(String tableName, String[] columnValues) throws Exception;//should db connection use be implemented inside an entry object?
     /**
-     * updates an entry in the appropriate table, if an error occurs throws an exception.
-     * this uses the method IEntry.getTableName() in order to get the Entry's table name
      *
-     * @param entry - type IEntry
-     * @param newValues
-     * @throws Exception - an SQL type exception
+     * @param tableName - string
+     * @param columnValues - string array.
+     * @param primaryKey - the id of the entry to update
+     * @throws Exception
      */
-    void updateEntry(IEntry entry, String[] newValues) throws Exception;
+    void updateEntry(String tableName, String[] columnValues, String primaryKey) throws Exception;
 
     /**
      * deletes all data from given table, but not the table itself
@@ -85,12 +67,11 @@ public interface IdbConnection {
     void deleteDb(String dbName) throws Exception;
 
     /**
-     * deletes an entry from DB given the Entry object required for deletion.
-     * this uses the method IEntry.getTableName() in order to get the Entry's table name.
-     * @param entry - type IEntry
+     * deletes an entry from DB given the Entry primaryKey required for deletion.
+     * @param tableName - String
      * @throws Exception - an SQL type exception
      */
-    void deleteById(IEntry entry) throws Exception;
+    void deleteById(String tableName, String primaryKey) throws Exception;
 
     /**
      * returns data of specific fields of an entry, i.e a user's password.
@@ -105,7 +86,14 @@ public interface IdbConnection {
      * @return Arraylist of Strings
      * @throws Exception - an SQL type exception
      */
-    ArrayList<String> getSpecificData(IEntry entry, String entryId, String[] namesOfSpecificField) throws Exception;
+    /**
+     *
+     * @param tableName
+     * @param primaryKey
+     * @return Map <key,value>
+     * @throws Exception
+     */
+    Map<String, String> getEntryData(String tableName, String primaryKey) throws Exception;
 
     /**
      * closes the connection to the DB, to be used if the user doesn't need any more communications with the DB itself.
@@ -114,14 +102,6 @@ public interface IdbConnection {
      */
     void closeConnection() throws Exception;
 
-    void deleteTable(IEntry entry) throws Exception;
-    /**
-     * inserts an entry to the appropriate table, if an error occurs throws an exception.
-     * this receives the table name in order to insert to the correct table.
-     * @param tablename - type String.
-     * @param entry - type IEntry
-     * @throws Exception - an SQL type exception
-     */
-    void insertToDbByTableName(String tablename, IEntry entry) throws Exception;
+    void deleteTable(String tableName) throws Exception;
 
 }
