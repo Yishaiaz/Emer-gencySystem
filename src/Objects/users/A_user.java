@@ -20,6 +20,7 @@ public class A_user extends Auser {
 
         String[] entry = {categoryName};
         db.insert("Categories",entry);
+        //testimg
 
 
     }
