@@ -1,36 +1,57 @@
 package Objects.users;
 
+import DataBaseConnection.SqliteDbConnection;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Auser {
-    public String name;
-    public String password;
-    public String status;
-    public String email;
-    public String organization;
+
+    Map<String,String> userInfo;
+    protected SqliteDbConnection db;
 
 
-    public Auser(String name){
+    public Auser(String name)throws Exception{
 
-        Map<String,String> userInfo = Db.getUser(name);
-        this.name = userInfo.get("name");
-        this.password = userInfo.get("password");
-        this.status = userInfo.get("status");
-        this.email = userInfo.get("email");
-        this.organization = userInfo.get("organization");
+        db = SqliteDbConnection.getInstance();
+
+       userInfo = db.getEntryData("Users",name,"name");
+
     }
     public Auser(String name,String password, String status, String email,String organization){
-        this.name = name;
-        this.password = password;
-        this.status = status;
-        this.email = email;
-        this.organization = organization;
+        userInfo = new HashMap<>();
+        userInfo.put("name",name);
+        userInfo.put("password",password);
+        userInfo.put("status",status);
+        userInfo.put("email",email);
+        userInfo.put("organization",organization);
+
     }
 
 
     public void changeUserPassword(String userId,String newPassword)throws Exception {
-        String[] entry = {name,newPassword,status,email,organization};
-        db.updateEntry("users",entry, name);
+        String[] entry = {getName(),newPassword,getStatus(),getEmail(),getOrganization()};
+        db.updateEntry("Users",entry, getName(),"name");
     }
 
+
+    public String getStatus() {
+        return userInfo.get("status");
+    }
+
+    public String getPassword() {
+        return userInfo.get("password");
+    }
+
+    public String getEmail() {
+        return userInfo.get("email");
+    }
+
+    public String getName() {
+        return userInfo.get("name");
+    }
+
+    public String getOrganization() {
+        return userInfo.get("organization");
+    }
 }

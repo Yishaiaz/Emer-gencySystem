@@ -1,29 +1,17 @@
 package Objects.Organization;
 
 import Objects.users.Auser;
-
 import java.util.LinkedList;
 import java.util.Map;
 
 public class Epicenter extends Aorganization {
-    public Epicenter(String name) {
+    public Epicenter(String name) throws Exception {
         super(name);
     }
 
-    public void addCategory(String categoryName, String userName)throws Exception{
-        if(categoryName == null || categoryName.length() == 0 || userName==null ){
-            throw new Exception("error: bad input: Epicenter:addCategory");
-        }
-        if(!isMember(userName)){
-            throw new Exception("user" + userName + "is not a member of Epicenter");
-        }
-        String[] entry = {categoryName};
-        db.insert("Categories",entry);
-
-
-    }
 
     public void createEvent(String userName, String[] categories, Auser[] users)throws Exception{
+        //checks that user is a Member of Epicenter
         if(!isMember(userName)){
             throw new Exception("user" + userName + "is not a member of Epicenter\n ONLY MEMBERS OF EPICENTER CAN CREATE EVENTS!");
         }
@@ -33,12 +21,14 @@ public class Epicenter extends Aorganization {
             throw new Exception("must give at least one category");
         }
 
-
-        for(String cat : categories){ //makes sure that all categories exist
-            db.getEntryData("Categories", cat);
+        //checks that categories exist
+        for(String cat : categories){
+            db.getEntryData("Categories", cat,"category");
         }
 
-        db.in
+        String newID = (db.getAllFromTable("Events").size() + 1)+"";
+
+
 
 
     }

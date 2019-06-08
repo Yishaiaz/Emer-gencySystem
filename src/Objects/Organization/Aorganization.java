@@ -1,5 +1,7 @@
 package Objects.Organization;
 
+import DataBaseConnection.SqliteDbConnection;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -7,21 +9,28 @@ import java.util.Set;
 
 public abstract class Aorganization {
     Set<String> members;
-    Map<String,String> userInfo;
+    Map<String,String> orgInfo;
+    protected SqliteDbConnection db;
 
 
 
 
 
-    public Aorganization(String name){
+    public Aorganization(String name)throws Exception{
+
+
+        db = SqliteDbConnection.getInstance();
+
         members = new HashSet<>();
 
-        userInfo = Db.getEntryData("Organizations",name);
+        orgInfo = db.getEntryData("Organizations",name,"name");
 
         LinkedList<Map<String,String>> allEntrys = db.getAllFromTable(name+"_members");
         for (Map<String,String> m : allEntrys){
             members.add(m.get("member"));
         }
+
+
 
     }
 
@@ -32,14 +41,14 @@ public abstract class Aorganization {
     }
 
     public String getName() {
-        return userInfo.get("name");
+        return orgInfo.get("name");
     }
 
     public String getType() {
-        return userInfo.get("type");
+        return orgInfo.get("type");
     }
 
     public String getAdmnin() {
-        return userInfo.get("admin");;
+        return orgInfo.get("admin");
     }
 }

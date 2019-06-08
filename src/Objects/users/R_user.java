@@ -6,9 +6,9 @@ public class R_user extends Auser{
     String rank;
 
 
-    public R_user(String name) {
+    public R_user(String name)throws Exception {
         super(name);
-        rank = db.getEntryData("Ranks","name");
+        rank = db.getEntryData("Ranks",name,"name").get("rank");
     }
 
 
