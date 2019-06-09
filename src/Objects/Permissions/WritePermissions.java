@@ -12,9 +12,9 @@ public class WritePermissions extends ReadPermision {
 
     int rank;
 
-    public WritePermissions(String eventId,String rank) throws Exception {
+    public WritePermissions(String eventId,int rank) throws Exception {
         super(eventId);
-        this.rank = Integer.parseInt(rank);
+        this.rank = rank;
     }
 
     @Override
@@ -24,14 +24,15 @@ public class WritePermissions extends ReadPermision {
 
         for(String member : members){
             Auser user = getUser(member);
-            if(user instanceof R_user && ((R_user)user).getRank() < rank)
-                continue;
+            if(user instanceof R_user && ((R_user)user).getRank() >= rank) {
+                String[] entry = {eventId, member};
+                db.insert("WritePermissions", entry);
+            }
 
 
-            String[] entry = {eventId,member};
-            db.insert("WritePermissions",entry);
+
         }
-        System.out.println("all members of "+ group + "have been added to ReadPermission list");
+
     }
 
     public Auser getUser(String name) throws Exception{
