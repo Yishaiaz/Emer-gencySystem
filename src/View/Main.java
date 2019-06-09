@@ -14,7 +14,6 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         Model model = new Model(SqliteDbConnection.getInstance());
-        model.createTables();
         Controller controller = new Controller(model);
         model.addObserver(controller);
 
