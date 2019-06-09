@@ -18,39 +18,34 @@
 
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
+<?import javafx.scene.control.Tooltip?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.View">
-    <top>
-        <MenuBar BorderPane.alignment="CENTER">
-            <menus>
-                <Menu mnemonicParsing="false" text="File">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="Close" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="About" onAction="#onClickAbout" >
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="About" onAction="#onClickAbout" />
-                    </items>
-                </Menu>
-            </menus>
-        </MenuBar>
-    </top>
     <center>
         <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
             <children>
                 <VBox alignment="CENTER_RIGHT">
                     <Label fx:id="user_name_label"> Hello Guest </Label>
                     <Label fx:id="user_rank_label" visible="false"/>
-                    <Button fx:id="btn_change_password" text="Change Password" onAction="#onClickChangeUserPassword" visible="false"/>
+                    <Label fx:id="user_organization_label" visible="false"/>
+                    <Button fx:id="btn_change_password" text="Change Password" onAction="#onClickChangeUserPassword" visible="false">
+                        <tooltip><Tooltip text="Change your password"/></tooltip>
+                    </Button>
                 </VBox>
                 <VBox alignment="CENTER">
                     <Label>Welcome To Emer-Gency System</Label>
                     <Label>It's like suchnot herum</Label>
                 </VBox>
                 <VBox alignment="CENTER_LEFT">
-                    <Button fx:id="btn_Login" onAction="#onClickLoginButton" text="Login" />
-                    <Button fx:id="btn_create_event" onAction="#onClickCreateEvent" text="Create Event" visible="false"/>
-                    <Button fx:id="btn_create_category" onAction="#onClickCreateCategory" text="Create Category" visible="false"/>
+                    <Button fx:id="btn_Login" onAction="#onClickLoginButton" text="Login" >
+                        <tooltip><Tooltip text="Login to the system to enable more features" /></tooltip>
+                    </Button>
+                    <Button fx:id="btn_create_event" onAction="#onClickCreateEvent" text="Create Event" visible="false">
+                        <tooltip><Tooltip text="Create a new emergency event" /></tooltip>
+                    </Button>
+
+                    <Button fx:id="btn_create_category" onAction="#onClickCreateCategory" text="Create Category" visible="false">
+                        <tooltip><Tooltip text="Create a new category for emergency events" /></tooltip>
+                    </Button>
                 </VBox>
 
             </children>
