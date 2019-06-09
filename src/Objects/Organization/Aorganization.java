@@ -32,7 +32,7 @@ public abstract class Aorganization {
         Set<String> members = new HashSet<>();
         LinkedList<Map<String,String>> allEntrys = db.getAllFromTable("OrganizationsUsers");
         for (Map<String,String> m : allEntrys){
-            if(m.get("name").equals(orgInfo.get("name")))
+            if(m.get("organization").equals(orgInfo.get("name")))
             members.add(m.get("member"));
         }
         return members;

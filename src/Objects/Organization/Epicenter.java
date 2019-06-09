@@ -10,7 +10,7 @@ public class Epicenter extends Aorganization { //single tone
     private Epicenter(String name) throws Exception {
         super(name);
     }
-    public static Epicenter getInstance(String name) throws Exception {
+    public static Epicenter getInstance() throws Exception {
         if(instance!=null){
             return instance;
         }
@@ -25,7 +25,7 @@ public class Epicenter extends Aorganization { //single tone
         if(categoryName == null || categoryName.length() == 0 || userName==null ){
             throw new Exception("error: bad input: Epicenter:addCategory");
         }
-        if(userName != getAdmnin()){
+        if(!userName.equals(getAdmnin())){
             throw new Exception("error: only the admin of the Epicenter can add a category: Epicenter:addCategory");
         }
 
@@ -34,7 +34,7 @@ public class Epicenter extends Aorganization { //single tone
 
     }
 
-    public void createEvent( String userId, String[] categories, String[] emergencyForces,String title,String status,String details)throws Exception{ //to do add argument checks!
+    public void createEvent( String userId, String[] categories, String[] emergencyForces,String title,String details)throws Exception{ //to do add argument checks!
 
         validaUser(userId);
         validateCategories(categories);
@@ -42,7 +42,7 @@ public class Epicenter extends Aorganization { //single tone
         Date date = new Date();
 
 
-        Event event = new Event(userId,categories, emergencyForces,title,status,details,date.toString());
+        Event event = new Event(userId,categories, emergencyForces,title,"in progress",details,date.toString());
 
 
     }
@@ -73,7 +73,7 @@ public class Epicenter extends Aorganization { //single tone
         Set<String> s = new HashSet<>();
         LinkedList<Map<String, String>> list = db.getAllFromTable("Categories");
         for(Map<String,String> map : list){
-            s.add(map.get("categories"));
+            s.add(map.get("category"));
         }
         return s;
 
