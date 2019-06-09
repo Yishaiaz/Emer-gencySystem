@@ -6,8 +6,8 @@ import Objects.Organization.EmergencyForce;
 import java.util.Set;
 
 public class ReadPermision {
-    String eventId;
-    SqliteDbConnection db;
+    protected String eventId;
+    protected SqliteDbConnection db;
 
 
     public ReadPermision(String eventId) throws Exception{
