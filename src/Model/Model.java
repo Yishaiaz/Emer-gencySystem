@@ -17,4 +17,16 @@ public class Model extends Observable implements IModel {
 
     public void createTables() {
     }
+
+    public void changeCurrentUserPassword(String username, String password) {
+        // todo: change to actualy retrieve user password and check
+    }
+
+    public boolean logInUser(String userName, String password) {
+        return true;// todo: change to actual authentication
+    }
+
+    public void createNewEvent(String event_name, String event_something) {
+
+    }
 }
