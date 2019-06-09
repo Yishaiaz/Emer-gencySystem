@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class Event {
@@ -49,19 +50,11 @@ public class Event {
     }
 
     private void getIdFromDb() throws Exception{
-
-        ResultSet rs = null;
-        Object o = null;
-        try {
-             o = db.runQuery("SELECT id FROM Events ORDER BY id DESC LIMIT 1");
-        }catch (Exception e){
+        LinkedList<Map<String, String>> ans= db.runQuery("SELECT id FROM Events ORDER BY id DESC LIMIT 1");
+        if(ans.size()==0)
             id="1";
-        }
-        rs = (ResultSet) o;
-
-        if(id == null || !id.equals("1"))
-            id = (Integer.parseInt(rs.getObject(1).toString())+1)+"";
-
+        else
+            id=Integer.parseInt(ans.get(0).get("id"))+1+"";
     }
 
     private void addReadPermissions(String[] emergencyForces ) throws Exception{
