@@ -101,6 +101,6 @@ public interface IdbConnection {
      * @param sqlQuery - the query in full
      * @return
      */
-    Object runQuery(String sqlQuery);
+    Object runQuery(String sqlQuery) throws Exception;
 
 }
