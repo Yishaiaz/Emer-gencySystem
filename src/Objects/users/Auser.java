@@ -33,6 +33,8 @@ public abstract class Auser {
     public void addtoDB()throws Exception{
         String[] entry = {userInfo.get("name"),userInfo.get("password"),userInfo.get("status"),userInfo.get("email"),userInfo.get("organization"),userInfo.get("admin")};
         db.insert("Users",entry);
+        String[] enntry2 = {getOrganization(),getName()};
+        db.insert("OrginizationsUsers",enntry2);
     }
 
 
@@ -60,5 +62,16 @@ public abstract class Auser {
 
     public String getOrganization() {
         return userInfo.get("organization");
+    }
+
+    public void printInfo(){
+        String ans = "user info: {";
+        String value;
+        for(String s : userInfo.keySet()){
+            value = userInfo.get(s);
+            ans = ans + s +"="+ userInfo.get(s)+",";
+        }
+        ans+="}";
+        System.out.println(userInfo);
     }
 }

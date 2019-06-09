@@ -28,6 +28,7 @@ public class Event {
         eventInfo.put("date",date);
         getIdFromDb();
 
+
         addToDb(categories,emergencyForces);
     }
 
@@ -49,12 +50,18 @@ public class Event {
 
     private void getIdFromDb() throws Exception{
 
-        ResultSet rs = (ResultSet) db.runQuery("SELECT id FROM Events ORDER BY id DESC LIMIT 1");
-        if(rs == null)
+        ResultSet rs = null;
+        Object o = null;
+        try {
+             o = db.runQuery("SELECT id FROM Events ORDER BY id DESC LIMIT 1");
+        }catch (Exception e){
             id="1";
-        else {
-            id = (Integer.parseInt(rs.getObject(1).toString())+1)+"";
         }
+        rs = (ResultSet) o;
+
+        if(id == null || !id.equals("1"))
+            id = (Integer.parseInt(rs.getObject(1).toString())+1)+"";
+
     }
 
     private void addReadPermissions(String[] emergencyForces ) throws Exception{
@@ -68,7 +75,7 @@ public class Event {
     private void addEforcesToDb(String[] emergencyForces)throws Exception {
         for(String ef : emergencyForces){
             String[] entry = {id,ef};
-            db.insert("EventOrganizations",entry);
+            db.insert("EventsOrganizations",entry);
         }
     }
 

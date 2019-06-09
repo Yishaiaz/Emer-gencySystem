@@ -30,9 +30,9 @@ public abstract class Aorganization {
 
     public Set<String> getAllMembers()throws Exception{
         Set<String> members = new HashSet<>();
-        LinkedList<Map<String,String>> allEntrys = db.getAllFromTable("OrganizationUsers");
+        LinkedList<Map<String,String>> allEntrys = db.getAllFromTable("OrganizationsUsers");
         for (Map<String,String> m : allEntrys){
-            if(m.get("name").equals(orgInfo.get("name")))
+            if(m.get("organization").equals(orgInfo.get("name")))
             members.add(m.get("member"));
         }
         return members;
@@ -50,5 +50,9 @@ public abstract class Aorganization {
 
     public String getAdmnin() {
         return orgInfo.get("admin");
+    }
+
+    public void printInfo(){
+        System.out.println("OrgInfo: {name="+getName()+", admin="+getAdmnin()+"}");
     }
 }

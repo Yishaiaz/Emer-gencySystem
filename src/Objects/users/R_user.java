@@ -31,4 +31,10 @@ public class R_user extends Auser{
             return true;
         return false;
     }
+
+    @Override
+    public void printInfo() {
+        super.printInfo();
+        System.out.println("rank = "+rank);
+    }
 }
