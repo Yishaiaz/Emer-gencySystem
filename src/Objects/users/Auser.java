@@ -64,6 +64,10 @@ public abstract class Auser {
         return userInfo.get("organization");
     }
 
+    public String getAdmin() {
+        return userInfo.get("admin");
+    }
+
     public void printInfo(){
         String ans = "user info: {";
         String value;
