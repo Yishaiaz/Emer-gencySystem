@@ -1,5 +1,8 @@
 package Objects.Organization;
 
+import Objects.event.Event;
+
+import java.util.Date;
 import java.util.Locale;
 
 public class Epicenter extends Aorganization { //single tone
@@ -32,13 +35,18 @@ public class Epicenter extends Aorganization { //single tone
 
     }
 
-    public void createEvent( String userId, String[] categories, String[] emergencyForces,String title,String status,String details)throws Exception{
+    public void createEvent( String userId, String[] categories, String[] emergencyForces,String title,String status,String details)throws Exception{ //to do add argument checks!
         if(userId==null || !isMember(userId))
             throw new Exception("ERROR: user is not an epicenter member!");
         if(categories==null || categories.length < 1)
             throw new Exception("ERROR: an event must have at least one category");
         if(emergencyForces==null || emergencyForces.length < 1)
             throw new Exception("ERROR: an event must have at least one category");
+        Date date = new Date();
+
+
+        Event event = new Event(userId,categories, emergencyForces,title,status,details,date.toString());
+
 
     }
 
