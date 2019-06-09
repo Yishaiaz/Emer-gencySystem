@@ -25,8 +25,9 @@ public class Controller extends Observable implements Observer {
         Map<String, String> succesfull_login = model.logInUser(userName, password);
         loggedUser = new HashMap<>();
         loggedUser.put( "username" ,  userName);
+        loggedUser.put( "rank" ,  succesfull_login.get("rank"));
         loggedUser.put( "organization" ,  succesfull_login.get("organization"));
-        loggedUser.put( "rank" ,  "5");
+        loggedUser.put( "isAdmin" ,  succesfull_login.get("isAdmin"));
         setChanged();
         notifyObservers();
     }
@@ -57,5 +58,9 @@ public class Controller extends Observable implements Observer {
 
     public String[] getEmergencyServices() throws Exception{
         return model.getEmergencyServices();
+    }
+
+    public void createNewCategory(String newCategory) throws Exception{
+        model.createNewCategory(newCategory);
     }
 }
