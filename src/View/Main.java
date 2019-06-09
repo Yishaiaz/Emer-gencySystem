@@ -26,7 +26,7 @@ public class Main extends Application {
 
 
         scene.getStylesheets().clear();
-        scene.getStylesheets().add(getClass().getResource("/mainScreenStyle.css").toExternalForm());
+//        scene.getStylesheets().add(getClass().getResource("/mainScreenStyle.css").toExternalForm());
         primaryStage.setScene(scene);
         View view = fxmlLoader.getController();
         view.setController(controller);

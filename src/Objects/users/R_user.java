@@ -18,5 +18,10 @@ public class R_user extends Auser{
         this.rank = rank;
     }
 
-
+    @Override
+    public void addtoDB() throws Exception {
+        super.addtoDB();
+        String[] entry = {userInfo.get("name"),rank};
+        db.insert("Ranks",entry);
+    }
 }
