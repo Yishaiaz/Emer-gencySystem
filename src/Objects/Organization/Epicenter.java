@@ -24,17 +24,13 @@ public class Epicenter extends Aorganization { //single tone
 
 
 
-    public void addCategory(String categoryName, String userName)throws Exception{
-        if(categoryName == null || categoryName.length() == 0 || userName==null ){
+    public void addCategory(String categoryName)throws Exception{
+        if(categoryName == null || categoryName.length() == 0){
             throw new Exception("error: bad input: Epicenter:addCategory");
-        }
-        if(!userName.equals(getAdmnin())){
-            throw new Exception("error: only the admin of the Epicenter can add a category: Epicenter:addCategory");
         }
 
         String[] entry = {categoryName};
         db.insert("Categories",entry);
-
 
     }
 

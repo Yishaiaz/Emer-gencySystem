@@ -42,8 +42,10 @@ public class View implements Observer{
                 }
                 if(loggedUser.get("organization").equals("epicenter")){
                     if(loggedUser.get("isAdmin").equals("true")){
-                        btn_create_event.setVisible(true);
                         btn_create_category.setVisible(true);
+                    }
+                    else{
+                        btn_create_event.setVisible(true);
                     }
                 }
                 user_organization_label.setText("Organization: "+loggedUser.get("organization"));

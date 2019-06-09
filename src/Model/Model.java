@@ -23,7 +23,6 @@ public class Model extends Observable implements IModel {
      * @throws Exception
      */
     public void changeCurrentUserPassword(String username, String password) throws Exception{
-        // todo: change to actualy retrieve user password and check
 
         Auser user = getUser(username);
         user.changeUserPassword(username,password);
@@ -69,6 +68,7 @@ public class Model extends Observable implements IModel {
      */
     public void createNewEvent(String username, String title, String[] categories, String[] organizations, String details) throws Exception{
 
+        Epicenter.getInstance().createEvent(username,categories,organizations,title,details);
     }
 
     /**
@@ -106,7 +106,8 @@ public class Model extends Observable implements IModel {
     }
 
     public void createNewCategory(String newCategory) throws Exception{
-        //todo: create a new category here
+        Epicenter.getInstance().addCategory(newCategory);
+
     }
 
     public Auser getUser(String name) throws Exception{
