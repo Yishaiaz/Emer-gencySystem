@@ -37,4 +37,8 @@ public class R_user extends Auser{
         super.printInfo();
         System.out.println("rank = "+rank);
     }
+
+    public int getRank(){
+        return Integer.parseInt(rank);
+    }
 }
