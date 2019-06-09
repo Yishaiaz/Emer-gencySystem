@@ -1,6 +1,9 @@
 package Objects.Organization;
 
 import Objects.event.Event;
+import Objects.users.A_user;
+import Objects.users.Auser;
+import Objects.users.R_user;
 
 import java.util.*;
 
@@ -32,6 +35,7 @@ public class Epicenter extends Aorganization { //single tone
         String[] entry = {categoryName};
         db.insert("Categories",entry);
 
+
     }
 
     public void createEvent( String userId, String[] categories, String[] emergencyForces,String title,String details)throws Exception{ //to do add argument checks!
@@ -40,9 +44,10 @@ public class Epicenter extends Aorganization { //single tone
         validateCategories(categories);
         validateemergencyForces(emergencyForces);
         Date date = new Date();
+        R_user user = new R_user(userId);
 
 
-        Event event = new Event(userId,categories, emergencyForces,title,"in progress",details,date.toString());
+        Event event = new Event(userId,categories, emergencyForces,title,"in progress",details,date.toString(),user.getRank());
 
 
     }
@@ -50,6 +55,9 @@ public class Epicenter extends Aorganization { //single tone
     private void validaUser(String userId)throws Exception{
         if(userId==null || !isMember(userId))
             throw new Exception("ERROR: user is not an epicenter member!");
+        Auser user = getUser(userId);
+        if(user instanceof A_user)
+            throw new Exception("ERROR:only R_users can create an event!!");
     }
 
     private void validateemergencyForces(String[] eForces)throws Exception{
@@ -77,6 +85,13 @@ public class Epicenter extends Aorganization { //single tone
         }
         return s;
 
+    }
+
+    public Auser getUser(String name) throws Exception{
+        Map<String,String>  userInfo = db.getEntryData("Users",name,"name");
+        if(userInfo.get("admin").equals("true"))
+            return new A_user(name);
+        else return new R_user(name);
     }
 
 
