@@ -49,6 +49,8 @@ public class Event {
         addReadPermissions(emergencyForces);
         //adds write permissions
         addWritePermissions(emergencyForces);
+        //adds the first update
+        addUpdate();
 
 
 
@@ -89,6 +91,11 @@ public class Event {
             String[] entry = {id,cat};
             db.insert("EventsCategories",entry);
         }
+    }
+
+    private void addUpdate()throws Exception{
+        EventUpdate update = new EventUpdate(getUserId(),getId(),getDetails());
+        update.printUpdae();
     }
 
     public String getTitle() {
