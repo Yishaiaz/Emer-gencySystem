@@ -1,18 +1,104 @@
 package Objects.event;
 
+import DataBaseConnection.SqliteDbConnection;
+import Objects.Permissions.ReadPermision;
+
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Event {
 
-    private String title;
-    private Date date;
-    private String status;
-    private String details;
-    private String[] categories;
-    private String userId;
+    private Map<String,String> eventInfo;
+    private SqliteDbConnection db;
+    String id;
 
-    public Event(String[] categories, String userId, String[] orginizations) {
-        this.categories = categories;
-        this.userId = userId;
+
+
+    //this constructor creates an event and ads it to the database
+    public Event( String userId, String[] categories, String[] emergencyForces,String title,String status,String details,String date)throws Exception {
+        db = SqliteDbConnection.getInstance();
+        eventInfo = new HashMap<>();
+        eventInfo.put("userId",userId);
+        eventInfo.put("title",title);
+        eventInfo.put("status",status);
+        eventInfo.put("details",details);
+        eventInfo.put("date",date);
+        getIdFromDb();
+
+        addToDb(categories,emergencyForces);
+    }
+
+    private void addToDb(String[] categories, String[] emergencyForces)throws Exception {
+        //adds event to Events Table
+        String[] entry = {id,getUserId(),getTitle(),getStatus(),getDetails(),getDate()};
+        db.insert("Events", entry);
+
+        //add categories to "EventsCategories"
+        addCategoriesToDb(categories);
+        //adds orginizations to "EventOrganizations"
+        addEforcesToDb(emergencyForces);
+        //adds read permissions to all orginizations involved
+        addReadPermissions(emergencyForces);
+
+
+
+    }
+
+    private void getIdFromDb() throws Exception{
+
+        ResultSet rs = (ResultSet) db.runQuery("SELECT id FROM Events ORDER BY id DESC LIMIT 1");
+        if(rs == null)
+            id="1";
+        else {
+            id = (Integer.parseInt(rs.getObject(1).toString())+1)+"";
+        }
+    }
+
+    private void addReadPermissions(String[] emergencyForces ) throws Exception{
+        ReadPermision rp = new ReadPermision(id);
+        for(String eForce : emergencyForces){
+            rp.addPermissions(eForce);
+        }
+        rp.addPermissions("epicenter");
+    }
+
+    private void addEforcesToDb(String[] emergencyForces)throws Exception {
+        for(String ef : emergencyForces){
+            String[] entry = {id,ef};
+            db.insert("EventOrganizations",entry);
+        }
+    }
+
+    private void addCategoriesToDb(String[] categories)throws Exception {
+        for(String cat : categories){
+            String[] entry = {id,cat};
+            db.insert("EventsCategories",entry);
+        }
+    }
+
+    public String getTitle() {
+        return eventInfo.get("title");
+    }
+
+    public String getDate() {
+        return eventInfo.get("date");
+    }
+
+    public String getStatus() {
+        return eventInfo.get("status");
+    }
+
+    public String getDetails() {
+        return eventInfo.get("details");
+    }
+
+    public String getUserId() {
+        return eventInfo.get("userId");
+    }
+    public String getId(){
+        return id;
     }
 }
