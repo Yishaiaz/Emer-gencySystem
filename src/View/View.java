@@ -51,7 +51,9 @@ public class View implements Observer{
                 btn_Login.setText("Logout");
                 user_name_label.setText("Hello " +loggedUser.get("username"));
                 user_rank_label.setText("Your Rank is " +loggedUser.get("rank"));
-                btn_create_event.setVisible(true);
+                if(loggedUser.get("organization").equals("epicenter")){
+                    btn_create_event.setVisible(true);
+                }
                 btn_change_password.setVisible(true);
             } else {
                 btn_Login.setText("Login");

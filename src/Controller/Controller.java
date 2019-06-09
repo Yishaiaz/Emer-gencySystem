@@ -22,13 +22,11 @@ public class Controller extends Observable implements Observer {
     }
 
     public void logIn(String userName, String password) throws Exception{
-        boolean succesfull_login = model.logInUser(userName, password);
-        if(succesfull_login){
-            loggedUser = new HashMap<>();
-            loggedUser.put( "username" ,  userName);
-            loggedUser.put( "password" ,  password);
-            loggedUser.put( "rank" ,  "5");
-        }
+        Map<String, String> succesfull_login = model.logInUser(userName, password);
+        loggedUser = new HashMap<>();
+        loggedUser.put( "username" ,  userName);
+        loggedUser.put( "organization" ,  succesfull_login.get("organization"));
+        loggedUser.put( "rank" ,  "5");
         setChanged();
         notifyObservers();
     }
