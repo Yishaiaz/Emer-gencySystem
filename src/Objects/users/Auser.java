@@ -29,6 +29,12 @@ public abstract class Auser {
 
     }
 
+    public void addtoDB()throws Exception{
+        String[] entry = {userInfo.get("name"),userInfo.get("password"),userInfo.get("status"),userInfo.get("email"),userInfo.get("organization")};
+        db.insert("Users",entry);
+
+    }
+
 
     public void changeUserPassword(String userId,String newPassword)throws Exception {
         String[] entry = {getName(),newPassword,getStatus(),getEmail(),getOrganization()};
