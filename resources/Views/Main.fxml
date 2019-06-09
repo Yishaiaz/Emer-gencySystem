@@ -16,6 +16,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.View">
     <top>
         <MenuBar BorderPane.alignment="CENTER">
@@ -25,16 +27,9 @@
                         <MenuItem mnemonicParsing="false" text="Close" />
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="profile">
+                <Menu mnemonicParsing="false" text="About" onAction="#onClickAbout" >
                     <items>
-                        <!--<MenuItem fx:id="menuItem_create" mnemonicParsing="false" onAction="#onClickCreateProfile" text="create" />-->
-                        <!--<MenuItem fx:id="menuItem_update" mnemonicParsing="false" onAction="#onClickUpdateProfile" text="update" />-->
-                        <!--<MenuItem fx:id="menuItem_delete" mnemonicParsing="false" onAction="#onClickDeleteProfile" text="delete" />-->
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Help">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="About" />
+                        <MenuItem mnemonicParsing="false" text="About" onAction="#onClickAbout" />
                     </items>
                 </Menu>
             </menus>
@@ -42,8 +37,23 @@
     </top>
     <center>
         <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-            <Label> Hello World!</Label>
-            <Button fx:id="btn_Login" onAction="#onClickLoginButton" text="Login" />
+            <children>
+                <VBox alignment="CENTER_RIGHT">
+                    <Label fx:id="user_name_label"> Hello Guest </Label>
+                    <Label fx:id="user_rank_label" visible="false"/>
+                    <Button fx:id="btn_change_password" text="Change Password" onAction="#onClickChangeUserPassword" visible="false"/>
+                </VBox>
+                <VBox alignment="CENTER">
+                    <Label>Welcome To Emer-Gency System</Label>
+                    <Label>It's like suchnot herum</Label>
+                </VBox>
+                <VBox alignment="CENTER_LEFT">
+                    <Button fx:id="btn_Login" onAction="#onClickLoginButton" text="Login" />
+                    <Button fx:id="btn_create_event" onAction="#onClickCreateEvent" text="Create Event" visible="false"/>
+                </VBox>
+
+            </children>
+
         </VBox>
     </center>
 </BorderPane>
