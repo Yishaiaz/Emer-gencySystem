@@ -259,7 +259,7 @@ public class SqliteDbConnection implements IdbConnection {
 
     @Override
     public void deleteTable(String tableName) throws Exception {
-
+        this.connectToDb();
         String sql = "DROP TABLE "+tableName+";";
 
         try (Connection tempConn = this.conn;
@@ -274,13 +274,14 @@ public class SqliteDbConnection implements IdbConnection {
     }
 
     @Override
-    public Object runQuery(String sqlQuery){
+    public Object runQuery(String sqlQuery) throws Exception{
+        this.connectToDb();
         try (Connection tempConn = this.conn;
         Statement stmt = tempConn.createStatement();
         ResultSet rs = stmt.executeQuery(sqlQuery)){
             return rs;
         }catch (Exception e){
-            return e;
+            throw (new Exception(e.getMessage()));
         }
     }
 
