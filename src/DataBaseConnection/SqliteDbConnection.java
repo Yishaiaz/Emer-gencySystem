@@ -276,7 +276,7 @@ public class SqliteDbConnection implements IdbConnection {
     @Override
     public Object runQuery(String sqlQuery){
         try (Connection tempConn = this.conn;
-        Statement stmt = tempConn();
+        Statement stmt = tempConn.createStatement();
         ResultSet rs = stmt.executeQuery(sqlQuery)){
             return rs;
         }catch (Exception e){
