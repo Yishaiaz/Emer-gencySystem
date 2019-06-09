@@ -274,12 +274,22 @@ public class SqliteDbConnection implements IdbConnection {
     }
 
     @Override
-    public Object runQuery(String sqlQuery) throws Exception{
+    public LinkedList<Map<String, String>> runQuery(String sqlQuery) throws Exception{
+        LinkedList<Map<String, String>> ans=new LinkedList<>();
         this.connectToDb();
         try (Connection tempConn = this.conn;
         Statement stmt = tempConn.createStatement();
-        ResultSet rs = stmt.executeQuery(sqlQuery)){
-            return rs;
+             ResultSet rs    = stmt.executeQuery(sqlQuery)){
+            ResultSetMetaData md = rs.getMetaData();
+            int columns = md.getColumnCount();
+            while (rs.next()){
+                HashMap row = new HashMap(columns);
+                for(int i=1; i<=columns; ++i){
+                    row.put(md.getColumnName(i),rs.getObject(i).toString());
+                }
+                ans.add(row);
+            }
+            return ans;
         }catch (Exception e){
             throw (new Exception(e.getMessage()));
         }
