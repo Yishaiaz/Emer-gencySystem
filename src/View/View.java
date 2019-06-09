@@ -6,28 +6,13 @@ import javafx.event.ActionEvent;
 
 import java.util.Observable;
 import java.util.Observer;
-import com.sun.org.apache.xml.internal.resolver.readers.ExtendedXMLCatalogReader;
-import javafx.event.ActionEvent;
+
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.util.StringConverter;
 
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class View implements Observer{
@@ -39,6 +24,7 @@ public class View implements Observer{
     public Button btn_create_category;
     public Label user_rank_label;
     public Label user_name_label;
+    public Label user_organization_label;
 
     public void setController(Controller controller) {
         m_controller = controller;
@@ -51,20 +37,27 @@ public class View implements Observer{
             if (loggedUser != null) {
                 btn_Login.setText("Logout");
                 user_name_label.setText("Hello " +loggedUser.get("username"));
-                user_rank_label.setText("Your Rank is " +loggedUser.get("rank"));
+                if(!loggedUser.get("rank").equals("")){
+                    user_rank_label.setText("Your Rank is " +loggedUser.get("rank"));
+                }
                 if(loggedUser.get("organization").equals("epicenter")){
-                    btn_create_event.setVisible(true);
                     if(loggedUser.get("isAdmin").equals("true")){
+                        btn_create_event.setVisible(true);
                         btn_create_category.setVisible(true);
                     }
                 }
+                user_organization_label.setText("Organization: "+loggedUser.get("organization"));
+                user_organization_label.setVisible(true);
                 btn_change_password.setVisible(true);
             } else {
                 btn_Login.setText("Login");
                 user_name_label.setText("Hello Guest");
                 user_rank_label.setText("");
                 btn_create_event.setVisible(false);
+                btn_create_category.setVisible(false);
                 btn_change_password.setVisible(false);
+                user_organization_label.setText("");
+                user_organization_label.setVisible(false);
             }
         }
     }
@@ -386,4 +379,5 @@ public class View implements Observer{
         alert.setContentText(content);
         alert.showAndWait();
     }
+
 }
