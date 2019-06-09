@@ -50,6 +50,7 @@
                 <VBox alignment="CENTER_LEFT">
                     <Button fx:id="btn_Login" onAction="#onClickLoginButton" text="Login" />
                     <Button fx:id="btn_create_event" onAction="#onClickCreateEvent" text="Create Event" visible="false"/>
+                    <Button fx:id="btn_create_category" onAction="#onClickCreateCategory" text="Create Category" visible="false"/>
                 </VBox>
 
             </children>
