@@ -2,6 +2,9 @@ package Model;
 
 import DataBaseConnection.IdbConnection;
 import Objects.Organization.Epicenter;
+import Objects.users.A_user;
+import Objects.users.Auser;
+import Objects.users.R_user;
 
 import java.sql.Date;
 import java.util.*;
@@ -21,6 +24,9 @@ public class Model extends Observable implements IModel {
      */
     public void changeCurrentUserPassword(String username, String password) throws Exception{
         // todo: change to actualy retrieve user password and check
+
+        Auser user = getUser(username);
+        user.changeUserPassword(username,password);
     }
 
     /**
@@ -31,12 +37,25 @@ public class Model extends Observable implements IModel {
      * @throws Exception
      */
     public Map<String,String> logInUser(String userName, String password) throws Exception {
-        Map<String, String> userData = new HashMap<>();
-        userData.put("username", userName);
-        userData.put("rank", "5");
-        userData.put("organization", "epicenter");
-        userData.put("isAdmin", "true");
-        return userData;// todo: change to actual authentication
+        Auser user = getUser(userName);
+        if(user.getPassword().equals(password)) {
+
+
+
+            Map<String, String> userData = new HashMap<>();
+            userData.put("username", user.getName());
+            if(user instanceof A_user)
+                userData.put("rank", "");
+            else{
+                userData.put("rank", ((R_user)user).getRank()+"");
+            }
+            userData.put("organization", user.getOrganization());
+            userData.put("isAdmin", user.getAdmin());
+            return userData;// todo: change to actual authentication
+        }
+        else{
+            throw new Exception("ERROR: invalid password");
+        }
     }
 
     /**
@@ -88,5 +107,12 @@ public class Model extends Observable implements IModel {
 
     public void createNewCategory(String newCategory) throws Exception{
         //todo: create a new category here
+    }
+
+    public Auser getUser(String name) throws Exception{
+        Map<String,String>  userInfo = db.getEntryData("Users",name,"name");
+        if(userInfo.get("admin").equals("true"))
+            return new A_user(name);
+        else return new R_user(name);
     }
 }
