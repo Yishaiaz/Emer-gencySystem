@@ -33,9 +33,10 @@ public class Model extends Observable implements IModel {
     public Map<String,String> logInUser(String userName, String password) throws Exception {
         Map<String, String> userData = new HashMap<>();
         userData.put("username", userName);
+        userData.put("rank", "5");
         userData.put("organization", "epicenter");
+        userData.put("isAdmin", "true");
         return userData;// todo: change to actual authentication
-
     }
 
     /**
@@ -83,5 +84,9 @@ public class Model extends Observable implements IModel {
             }
         }
         return ans;
+    }
+
+    public void createNewCategory(String newCategory) throws Exception{
+        //todo: create a new category here
     }
 }

@@ -36,6 +36,7 @@ public class View implements Observer{
     public Button btn_Login;
     public Button btn_create_event;
     public Button btn_change_password;
+    public Button btn_create_category;
     public Label user_rank_label;
     public Label user_name_label;
 
@@ -53,6 +54,9 @@ public class View implements Observer{
                 user_rank_label.setText("Your Rank is " +loggedUser.get("rank"));
                 if(loggedUser.get("organization").equals("epicenter")){
                     btn_create_event.setVisible(true);
+                    if(loggedUser.get("isAdmin").equals("true")){
+                        btn_create_category.setVisible(true);
+                    }
                 }
                 btn_change_password.setVisible(true);
             } else {
@@ -88,6 +92,53 @@ public class View implements Observer{
     public void onClickAbout(ActionEvent actionEvent) {
 
     }
+    public void onClickCreateCategory(ActionEvent actionEvent) {
+        displayCreateNewCategoryDialog();
+    }
+
+    private void displayCreateNewCategoryDialog() {
+        Dialog dialog = new Dialog();
+        dialog.setHeaderText("Create a category");
+        dialog.setResizable(true);
+
+        // Widgets
+        Label lbl_password = new Label("New Category name: ");
+        TextField new_category = new TextField();
+        Button createEvent = new Button("Create Category");
+
+        // Create layout and add to dialog
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 35, 20, 35));
+        grid.add(lbl_password, 1, 1); // col=1, row=1
+        grid.add(new_category, 2, 1);
+        grid.add(createEvent, 1, 3);
+        dialog.getDialogPane().setContent(grid);
+
+        // Add button to dialog
+        ButtonType btn_cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(btn_cancel);
+
+        //on click handlers
+        createEvent.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                String newCategory = new_category.getText();
+                try{
+                    m_controller.createNewCategory(newCategory);
+                }catch(Exception createNewCategoryException) {
+                    showAlert("sorry", createNewCategoryException.getMessage());
+                }
+                dialog.close();
+            }
+        });
+
+        // Show dialog
+        dialog.showAndWait();
+    }
+
 
     private void displayCreateEventDialog() {
 //        String userId, String[] categories, String[] emergencyForces,String title,String status,String details
@@ -252,8 +303,8 @@ public class View implements Observer{
                 String newPassword = text1.getText();
                 try{
                     m_controller.changeCurrentUserPassword(newPassword);
-                }catch(Exception changeCurrentPasswordExcemption) {
-                    showAlert("sorry", changeCurrentPasswordExcemption.getMessage());
+                }catch(Exception changeCurrentPasswordException) {
+                    showAlert("sorry", changeCurrentPasswordException.getMessage());
                 }
                 dialog.close();
             }
