@@ -13,9 +13,10 @@ public class R_user extends Auser{
 
 
 
-    public R_user(String name, String password, String status, String email, String organization,String rank) {
-        super(name, password, status, email, organization);
+    public R_user(String name, String password, String status, String email, String organization,String admin,String rank) throws Exception{
+        super(name, password, status, email, organization,admin);
         this.rank = rank;
+        addtoDB();
     }
 
     @Override
@@ -23,5 +24,11 @@ public class R_user extends Auser{
         super.addtoDB();
         String[] entry = {userInfo.get("name"),rank};
         db.insert("Ranks",entry);
+    }
+
+    public boolean isMemberOfEpicenter(){
+        if(userInfo.get("organization").equals("epicenter"))
+            return true;
+        return false;
     }
 }

@@ -8,6 +8,11 @@ public class Event {
     private Date date;
     private String status;
     private String details;
-    private String id;
+    private String[] categories;
+    private String userId;
 
+    public Event(String[] categories, String userId, String[] orginizations) {
+        this.categories = categories;
+        this.userId = userId;
+    }
 }

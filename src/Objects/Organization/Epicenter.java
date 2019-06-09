@@ -1,11 +1,10 @@
 package Objects.Organization;
 
-import Objects.users.Auser;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.Locale;
 
 public class Epicenter extends Aorganization { //single tone
     private static Epicenter instance =null;
+
     private Epicenter(String name) throws Exception {
         super(name);
     }
@@ -32,6 +31,17 @@ public class Epicenter extends Aorganization { //single tone
         db.insert("Categories",entry);
 
     }
+
+    public void createEvent( String userId, String[] categories, String[] emergencyForces,String title,String status,String details)throws Exception{
+        if(userId==null || !isMember(userId))
+            throw new Exception("ERROR: user is not an epicenter member!");
+        if(categories==null || categories.length < 1)
+            throw new Exception("ERROR: an event must have at least one category");
+        if(emergencyForces==null || emergencyForces.length < 1)
+            throw new Exception("ERROR: an event must have at least one category");
+
+    }
+
 
 
 
