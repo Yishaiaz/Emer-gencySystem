@@ -179,7 +179,7 @@ public class View implements Observer{
 
 
         Label lbl_details = new Label("Details ");
-        TextField details_text_input = new TextField();
+        TextArea details_text_input = new TextArea();
 
 
         Button createEvent = new Button("Create Event");
