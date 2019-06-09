@@ -41,7 +41,7 @@ public class Epicenter extends Aorganization { //single tone
             throw new Exception("ERROR: an event must have at least one category");
 
     }
-    
+
 
 
 
