@@ -96,4 +96,11 @@ public interface IdbConnection {
 
     void deleteTable(String tableName) throws Exception;
 
+    /**
+     * runs any sql query, returns an Object, if there are no errors, the object is a ResultSet object, else, an Exception object.
+     * @param sqlQuery - the query in full
+     * @return
+     */
+    Object runQuery(String sqlQuery);
+
 }

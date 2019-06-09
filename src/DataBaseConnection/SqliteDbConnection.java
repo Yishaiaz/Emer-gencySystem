@@ -273,6 +273,17 @@ public class SqliteDbConnection implements IdbConnection {
         }
     }
 
+    @Override
+    public Object runQuery(String sqlQuery){
+        try (Connection tempConn = this.conn;
+        Statement stmt = tempConn();
+        ResultSet rs = stmt.executeQuery(sqlQuery)){
+            return rs;
+        }catch (Exception e){
+            return e;
+        }
+    }
+
     private String convertArrayToSingleStr(String[] array){
         String ans ="";
         for(String str: array){
